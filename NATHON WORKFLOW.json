@@ -1,0 +1,604 @@
+{
+  "name": "NATHON WORKFLOW",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1
+              ],
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        32
+      ],
+      "id": "37e9628e-bf4d-4254-96ab-a524d1f25ab9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": " https://internal.users.n8n.cloud/webhook/custom-erp",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "unique_id",
+              "value": "27bb5bb4e1d5e2a236b725e6b6a54c05"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        32
+      ],
+      "id": "a1582ec8-ea35-4498-b23f-deddbea84869",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "sSpuC7g3lazy1f1Y",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app6dhXur0JfpCXv1",
+          "mode": "list",
+          "cachedResultName": "NATHON_ORDERS",
+          "cachedResultUrl": "https://airtable.com/app6dhXur0JfpCXv1"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblPvTFKgcGL8MPTN",
+          "mode": "list",
+          "cachedResultName": "ALL_ORDERS",
+          "cachedResultUrl": "https://airtable.com/app6dhXur0JfpCXv1/tblPvTFKgcGL8MPTN"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "orderID",
+              "displayName": "orderID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "customerID",
+              "displayName": "customerID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "employeeName",
+              "displayName": "employeeName",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "orderPrice",
+              "displayName": "orderPrice",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "orderStatus",
+              "displayName": "orderStatus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        896,
+        -64
+      ],
+      "id": "1247bbd5-119e-4114-8746-0f854aa16ff2",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "OnysZjq88ttfxV9R",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "90377310-67d5-4300-91f0-e17e4b272dea",
+              "leftValue": "={{ $json.orderStatus }}",
+              "rightValue": "processing",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        32
+      ],
+      "id": "8cccc782-dc8f-4cf3-92bc-8162cd79d4ed",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5b6d77d9-2494-442e-8043-62f2b5794d89",
+              "name": "orderID",
+              "value": "={{ $json.orderID }}",
+              "type": "number"
+            },
+            {
+              "id": "f3470712-b54a-4b3f-a3fa-f35af74b392a",
+              "name": "orderPrice",
+              "value": "={{ $json.orderPrice }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        -64
+      ],
+      "id": "59073d02-1722-40e3-98fd-f96003e90c28",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst totalBooked = items.length;\nlet bookedSum = 0;\n\nfor (let i = 0; i < items.length; i++) {\n  bookedSum = bookedSum + items[i].json.orderPrice;\n}\n\nreturn [{ json: { totalBooked, bookedSum } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        128
+      ],
+      "id": "5f85d5e0-e11e-4b3e-ba7d-a56cb5d18fc9",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=This week we've {{$json[\"totalBooked\"]}} booked orders with a total value of {{$json[\"bookedSum\"]}}. My Unique ID: {{ $('HTTP Request').params[\"headerParameters\"][\"parameters\"][0][\"value\"] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        896,
+        128
+      ],
+      "id": "0df76405-1dda-465b-a737-1ecd3aac6446",
+      "name": "Discord",
+      "webhookId": "d904c8ed-b27c-4fad-b8c2-db30ddd1adb4",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "q9bkl26Bk4QM69pY",
+          "name": "Discord Webhook account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "HTTP Request": [
+      {
+        "json": {
+          "orderID": 1,
+          "customerID": 8,
+          "employeeName": "Mario",
+          "orderPrice": 150.32,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 2,
+          "customerID": 5,
+          "employeeName": "Mario",
+          "orderPrice": 161.1,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 3,
+          "customerID": 1,
+          "employeeName": "Samir",
+          "orderPrice": 111.19,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 4,
+          "customerID": 2,
+          "employeeName": "Amelie",
+          "orderPrice": 61.16,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 5,
+          "customerID": 10,
+          "employeeName": "Amelie",
+          "orderPrice": 191.36,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 6,
+          "customerID": 2,
+          "employeeName": "Mario",
+          "orderPrice": 165.65,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 7,
+          "customerID": 9,
+          "employeeName": "Amelie",
+          "orderPrice": 135.02,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 8,
+          "customerID": 4,
+          "employeeName": "Mario",
+          "orderPrice": 163.38,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 9,
+          "customerID": 10,
+          "employeeName": "Sarah",
+          "orderPrice": 153.01,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 10,
+          "customerID": 8,
+          "employeeName": "Sarah",
+          "orderPrice": 164.88,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 11,
+          "customerID": 3,
+          "employeeName": "Sarah",
+          "orderPrice": 90.56,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 12,
+          "customerID": 6,
+          "employeeName": "Mario",
+          "orderPrice": 168.48,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 13,
+          "customerID": 1,
+          "employeeName": "Mario",
+          "orderPrice": 138.99,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 14,
+          "customerID": 9,
+          "employeeName": "Yoko",
+          "orderPrice": 108.7,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 15,
+          "customerID": 9,
+          "employeeName": "Samir",
+          "orderPrice": 32.58,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 16,
+          "customerID": 4,
+          "employeeName": "Amelie",
+          "orderPrice": 124.97,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 17,
+          "customerID": 8,
+          "employeeName": "Amelie",
+          "orderPrice": 133.79,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 18,
+          "customerID": 5,
+          "employeeName": "Sarah",
+          "orderPrice": 192.3,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 19,
+          "customerID": 2,
+          "employeeName": "Samir",
+          "orderPrice": 24.07,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 20,
+          "customerID": 2,
+          "employeeName": "Amelie",
+          "orderPrice": 101.71,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 21,
+          "customerID": 5,
+          "employeeName": "Mario",
+          "orderPrice": 160.08,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 22,
+          "customerID": 10,
+          "employeeName": "Amelie",
+          "orderPrice": 102.58,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 23,
+          "customerID": 3,
+          "employeeName": "Yoko",
+          "orderPrice": 48.37,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 24,
+          "customerID": 8,
+          "employeeName": "Mario",
+          "orderPrice": 55.9,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 25,
+          "customerID": 4,
+          "employeeName": "Sarah",
+          "orderPrice": 27.76,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 26,
+          "customerID": 7,
+          "employeeName": "Mario",
+          "orderPrice": 78.7,
+          "orderStatus": "processing"
+        }
+      },
+      {
+        "json": {
+          "orderID": 27,
+          "customerID": 2,
+          "employeeName": "Mario",
+          "orderPrice": 153.73,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 28,
+          "customerID": 6,
+          "employeeName": "Sarah",
+          "orderPrice": 165.65,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 29,
+          "customerID": 6,
+          "employeeName": "Mario",
+          "orderPrice": 138.99,
+          "orderStatus": "booked"
+        }
+      },
+      {
+        "json": {
+          "orderID": 30,
+          "customerID": 7,
+          "employeeName": "Sarah",
+          "orderPrice": 139.77,
+          "orderStatus": "booked"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "991cfcfa-2ce5-42cd-8c19-9431a70ea106",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7fa2727c4f1abfd351afd859553ab5d22b9affe9d2a5f248182aeac4b8350169"
+  },
+  "id": "wfeQIe8FrwfzcW9C",
+  "tags": []
+}
